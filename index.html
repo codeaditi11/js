@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Fun Interactive Blocks</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f5f7fa;
+    color: #222;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+  }
+  .container {
+    width: 100%;
+    max-width: 700px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 12px;
+  }
+  /* Cards styling */
+  .block {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgb(0 0 0 / 0.07);
+    padding: 18px 22px 24px;
+    transition: transform 0.3s ease;
+    user-select: none;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .block:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgb(0 0 0 / 0.12);
+  }
+  .block h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #3a3f58;
+    font-size: 1.25rem;
+  }
+  button {
+    background: #556ee6;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 7px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background: #3e53c0;
+  }
+  input[type="number"],
+  input[type="text"],
+  input[type="email"] {
+    padding: 8px 12px;
+    border-radius: 7px;
+    border: 1.8px solid #ccc;
+    font-size: 1rem;
+    width: 100%;
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease;
+  }
+  input[type="number"]:focus,
+  input[type="text"]:focus,
+  input[type="email"]:focus {
+    border-color: #556ee6;
+    outline: none;
+  }
+  label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+    font-size: 0.9rem;
+    color: #556ee6;
+  }
+  .output {
+    margin-top: 10px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+    min-height: 1.3em;
+    user-select: text;
+    word-break: break-word;
+  }
+  .row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  /* Circle changer */
+  .circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #556ee6;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background-color 0.4s ease;
+    align-self: center;
+    flex-shrink: 0;
+  }
+  /* Color mixer sliders */
+  .slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .slider-label {
+    font-size: 0.85rem;
+    color: #444;
+    margin-left: 6px;
+  }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 8px;
+    border-radius: 5px;
+    background: #ddd;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #556ee6;
+    cursor: pointer;
+    border: 2px solid #3e53c0;
+    margin-top: -7px;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #556ee6;
+    cursor: pointer;
+    border: 2px solid #3e53c0;
+  }
+  /* Calculator */
+  .calc-display {
+    width: 100%;
+    height: 38px;
+    font-size: 1.1rem;
+    border: 1.8px solid #ccc;
+    border-radius: 7px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    text-align: right;
+    background: #f9f9fc;
+    user-select: none;
+    pointer-events: none;
+  }
+  .calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 8px;
+  }
+  .calc-buttons button {
+    padding: 12px 0;
+    font-size: 1.05rem;
+  }
+  /* Responsive */
+  @media (max-width: 720px) {
+    .container {
+      max-width: 100vw;
+      grid-template-columns: 1fr;
+      padding: 0 12px;
+    }
+    .block {
+      min-height: auto;
+    }
+  }
+  @media (max-height: 600px) {
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 1. Alert button (1 or 2) -->
+  <section class="block">
+    <h2>Alert Buttons</h2>
+    <div class="row">
+      <button id="alertBtn1">Alert 1</button>
+      <button id="alertBtn2">Alert 2</button>
+    </div>
+  </section>
+
+  <!-- 2. Addition -->
+  <section class="block">
+    <h2>Addition</h2>
+    <input type="number" id="addNum1" placeholder="Number 1" />
+    <input type="number" id="addNum2" placeholder="Number 2" />
+    <button id="addBtn">Add</button>
+    <div class="output" id="addResult"></div>
+  </section>
+
+  <!-- 3. Multiplication -->
+  <section class="block">
+    <h2>Multiplication</h2>
+    <input type="number" id="mulNum1" placeholder="Number 1" />
+    <input type="number" id="mulNum2" placeholder="Number 2" />
+    <button id="mulBtn">Multiply</button>
+    <div class="output" id="mulResult"></div>
+  </section>
+
+  <!-- 4. Check Even or Odd -->
+  <section class="block">
+    <h2>Even or Odd?</h2>
+    <input type="number" id="evenOddNum" placeholder="Enter a number" />
+    <button id="evenOddBtn">Check</button>
+    <div class="output" id="evenOddResult"></div>
+  </section>
+
+  <!-- 5. Legal Age to Vote -->
+  <section class="block">
+    <h2>Legal Voting Age</h2>
+    <input type="number" id="ageInput" placeholder="Enter your age" />
+    <button id="checkAgeBtn">Check</button>
+    <div class="output" id="ageResult"></div>
+  </section>
+
+  <!-- 6. Print Prime Numbers -->
+  <section class="block">
+    <h2>Prime Numbers</h2>
+    <input type="number" id="primeMax" placeholder="Max number" />
+    <button id="printPrimeBtn">Show Primes</button>
+    <div class="output" id="primeOutput" style="max-height: 90px; overflow-y: auto;"></div>
+  </section>
+
+  <!-- 7. Form -->
+  <section class="block" style="min-height: 260px;">
+    <h2>User Form</h2>
+    <form id="userForm" autocomplete="off">
+      <label for="nameInput">Name</label>
+      <input type="text" id="nameInput" required />
+      <label for="emailInput">Email</label>
+      <input type="email" id="emailInput" required />
+      <label for="contactInput">Contact Number</label>
+      <input type="text" id="contactInput" required pattern="[0-9]{7,15}" title="7 to 15 digits"/>
+      <label for="rollInput">Roll Number</label>
+      <input type="text" id="rollInput" required />
+      <button type="submit">Submit</button>
+    </form>
+    <div class="output" id="formOutput"></div>
+  </section>
+
+  <!-- 8. Circle Colour Changer -->
+  <section class="block" style="align-items: center;">
+    <h2>Circle Colour Changer</h2>
+    <div class="circle" id="colorCircle" title="Click me"></div>
+    <button id="resetCircleBtn" style="margin-top:12px; background-color:#e14c4c;">Reset</button>
+  </section>
+
+  <!-- 9. Grade Calculator -->
+  <section class="block">
+    <h2>Grade Calculator</h2>
+    <label for="gradeScore">Enter marks (0-100)</label>
+    <input type="number" id="gradeScore" min="0" max="100" />
+    <button id="gradeCalcBtn">Get Grade</button>
+    <div class="output" id="gradeResult"></div>
+  </section>
+
+  <!-- 10. Click, Double Click & Hover Counter -->
+  <section class="block" style="user-select:none;">
+    <h2>Click / Double Click / Hover</h2>
+    <button id="countButton" style="width:100%;">Interact with me</button>
+    <div class="output" id="clickCounts" style="margin-top:12px; font-weight: 600;"></div>
+  </section>
+
+  <!-- 11. Colour Mixer -->
+  <section class="block">
+    <h2>Colour Mixer</h2>
+    <div class="slider-container">
+      <label for="redRange" class="slider-label">Red</label>
+      <input type="range" min="0" max="255" value="0" id="redRange" />
+      <label for="greenRange" class="slider-label">Green</label>
+      <input type="range" min="0" max="255" value="0" id="greenRange" />
+      <label for="blueRange" class="slider-label">Blue</label>
+      <input type="range" min="0" max="255" value="0" id="blueRange" />
+    </div>
+    <div style="margin-top:12px; height: 50px; border-radius: 8px; background:#000" id="colorBox"></div>
+  </section>
+
+  <!-- 12. Simple Calculator -->
+  <section class="block" style="min-height: 280px;">
+    <h2>Simple Calculator</h2>
+    <div class="calc-display" id="calcDisplay">0</div>
+    <div class="calc-buttons">
+      <button data-calc="7">7</button>
+      <button data-calc="8">8</button>
+      <button data-calc="9">9</button>
+      <button data-calc="÷">÷</button>
+      <button data-calc="4">4</button>
+      <button data-calc="5">5</button>
+      <button data-calc="6">6</button>
+      <button data-calc="×">×</button>
+      <button data-calc="1">1</button>
+      <button data-calc="2">2</button>
+      <button data-calc="3">3</button>
+      <button data-calc="-">-</button>
+      <button data-calc="0">0</button>
+      <button data-calc=".">.</button>
+      <button data-calc="C">C</button>
+      <button data-calc="+">+</button>
+      <button data-calc="sin">sin</button>
+      <button data-calc="cos">cos</button>
+      <button data-calc="tan">tan</button>
+      <button data-calc="=">=</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // 1. Alert buttons
+  document.getElementById('alertBtn1').onclick = () => alert('Alert button 1 clicked!');
+  document.getElementById('alertBtn2').onclick = () => alert('Alert button 2 clicked!');
+
+  // 2. Addition
+  document.getElementById('addBtn').onclick = () => {
+    const n1 = Number(document.getElementById('addNum1').value);
+    const n2 = Number(document.getElementById('addNum2').value);
+    if(isNaN(n1) || isNaN(n2)) {
+      document.getElementById('addResult').textContent = 'Please enter valid numbers.';
+      return;
+    }
+    document.getElementById('addResult').textContent = `Result: ${n1 + n2}`;
+  };
+
+  // 3. Multiplication
+  document.getElementById('mulBtn').onclick = () => {
+    const n1 = Number(document.getElementById('mulNum1').value);
+    const n2 = Number(document.getElementById('mulNum2').value);
+    if(isNaN(n1) || isNaN(n2)) {
+      document.getElementById('mulResult').textContent = 'Please enter valid numbers.';
+      return;
+    }
+    document.getElementById('mulResult').textContent = `Result: ${n1 * n2}`;
+  };
+
+  // 4. Even or Odd check
+  document.getElementById('evenOddBtn').onclick = () => {
+    const val = Number(document.getElementById('evenOddNum').value);
+    if (isNaN(val)) {
+      document.getElementById('evenOddResult').textContent = 'Please enter a valid number.';
+      return;
+    }
+    document.getElementById('evenOddResult').textContent = (val % 2 === 0) ? `${val} is Even` : `${val} is Odd`;
+  };
+
+  // 5. Legal voting age check
+  document.getElementById('checkAgeBtn').onclick = () => {
+    const age = Number(document.getElementById('ageInput').value);
+    if (isNaN(age) || age < 0) {
+      document.getElementById('ageResult').textContent = 'Please enter a valid age.';
+      return;
+    }
+    document.getElementById('ageResult').textContent = age >= 18 ? 'You are eligible to vote.' : 'You are NOT eligible to vote.';
+  };
+
+  // 6. Print prime numbers
+  document.getElementById('printPrimeBtn').onclick = () => {
+    const max = Number(document.getElementById('primeMax').value);
+    if (isNaN(max) || max < 2) {
+      document.getElementById('primeOutput').textContent = 'Enter a number 2 or greater.';
+      return;
+    }
+    const primes = [];
+    for(let i = 2; i <= max; i++) {
+      let isPrime = true;
+      for(let j=2; j*j <= i; j++) {
+        if(i % j === 0) {
+          isPrime = false; break;
+        }
+      }
+      if(isPrime) primes.push(i);
+    }
+    document.getElementById('primeOutput').textContent = primes.join(', ');
+  };
+
+  // 7. User form
+  document.getElementById('userForm').onsubmit = (e) => {
+    e.preventDefault();
+    const name = e.target.name.value.trim();
+    const email = e.target.email.value.trim();
+    const contact = e.target.contact.value.trim();
+    const roll = e.target.roll.value.trim();
+
+    if(!name || !email || !contact || !roll) {
+      document.getElementById('formOutput').textContent = 'Please fill all fields correctly.';
+      return;
+    }
+    document.getElementById('formOutput').textContent =
+      `Submitted: Name=${name}, Email=${email}, Contact=${contact}, Roll No=${roll}`;
+    e.target.reset();
+  };
+
+  // 8. Circle colour changer
+  const circle = document.getElementById('colorCircle');
+  const colors = ['#556ee6', '#e14c4c', '#0bbfba'];
+  let colorIndex = 0;
+  circle.onclick = () => {
+    colorIndex = (colorIndex + 1) % colors.length;
+    circle.style.backgroundColor = colors[colorIndex];
+  };
+  document.getElementById('resetCircleBtn').onclick = () => {
+    colorIndex = 0;
+    circle.style.backgroundColor = colors[colorIndex];
+  };
+
+  // 9. Grade calculator
+  document.getElementById('gradeCalcBtn').onclick = () => {
+    const score = Number(document.getElementById('gradeScore').value);
+    if (isNaN(score) || score < 0 || score > 100) {
+      document.getElementById('gradeResult').textContent = 'Enter marks between 0 and 100.';
+      return;
+    }
+    let grade = '';
+    if (score >= 90) grade = 'A+';
+    else if (score >= 80) grade = 'A';
+    else if (score >= 70) grade = 'B';
+    else if (score >= 60) grade = 'C';
+    else if (score >= 50) grade = 'D';
+    else grade = 'F';
+    document.getElementById('gradeResult').textContent = `Grade: ${grade}`;
+  };
+
+  // 10. Click counters
+  const countButton = document.getElementById('countButton');
+  let singleClicks = 0, doubleClicks = 0, mouseOvers = 0;
+  countButton.onclick = (e) => {
+    singleClicks++;
+    updateCounterText();
+  };
+  countButton.ondblclick = (e) => {
+    e.preventDefault();
+    doubleClicks++;
+    updateCounterText();
+  };
+  countButton.onmouseenter = () => {
+    mouseOvers++;
+    updateCounterText();
+  };
+  function updateCounterText() {
+    document.getElementById('clickCounts').textContent =
+      `Clicks: ${singleClicks} | Double Clicks: ${doubleClicks} | Hover: ${mouseOvers}`;
+  }
+
+  // 11. Colour mixer
+  const redRange = document.getElementById('redRange');
+  const greenRange = document.getElementById('greenRange');
+  const blueRange = document.getElementById('blueRange');
+  const colorBox = document.getElementById('colorBox');
+
+  function updateColorMix() {
+    const r = Number(redRange.value);
+    const g = Number(greenRange.value);
+    const b = Number(blueRange.value);
+    colorBox.style.backgroundColor = `rgb(${r},${g},${b})`;
+  }
+  redRange.oninput = greenRange.oninput = blueRange.oninput = updateColorMix;
+  updateColorMix();
+
+  // 12. Simple calculator
+  (function() {
+    const display = document.getElementById('calcDisplay');
+    const buttons = document.querySelectorAll('.calc-buttons button');
+    let currentInput = '';
+    let lastResult = null;
+
+    function isOperator(char) {
+      return ['+', '-', '×', '÷'].includes(char);
+    }
+    function calculate(x, y, op) {
+      x = parseFloat(x);
+      y = parseFloat(y);
+      if(isNaN(x) || isNaN(y)) return NaN;
+      switch (op) {
+        case '+': return x + y;
+        case '-': return x - y;
+        case '×': return x * y;
+        case '÷': return y === 0 ? NaN : x / y;
+        default: return NaN;
+      }
+    }
+    function evaluateExpression(expr) {
+      try {
+        // We'll parse with simple approach: handle sin, cos, tan, then arithmetic
+        expr = expr.toLowerCase();
+
+        // Replace sin(x), cos(x), tan(x) calls
+        expr = expr.replace(/sin\(([^)]+)\)/g, (_, v) => Math.sin(parseFloat(v) * Math.PI / 180));
+        expr = expr.replace(/cos\(([^)]+)\)/g, (_, v) => Math.cos(parseFloat(v) * Math.PI / 180));
+        expr = expr.replace(/tan\(([^)]+)\)/g, (_, v) => Math.tan(parseFloat(v) * Math.PI / 180));
+
+        // Replace × and ÷ with * and /
+        expr = expr.replace(/×/g, '*').replace(/÷/g, '/');
+
+        // Use Function to evaluate safely (very limited)
+        if(/[^0-9+\-*/(). e]/.test(expr)) return 'Error';
+        const val = Function('"use strict";return (' + expr + ')')();
+        if(val === undefined || isNaN(val) || !isFinite(val)) return 'Error';
+        return val;
+      } catch (_) {
+        return 'Error';
+      }
+    }
+
+    buttons.forEach(b => {
+      b.addEventListener('click', () => {
+        const val = b.getAttribute('data-calc');
+        if(val === 'C') {
+          currentInput = '';
+          display.textContent = '0';
+          return;
+        }
+        if(val === '=') {
+          const res = evaluateExpression(currentInput);
+          display.textContent = res;
+          currentInput = res === 'Error' ? '' : res.toString();
+          return;
+        }
+        if(['sin','cos','tan'].includes(val)) {
+          currentInput += val + '(';
+          display.textContent = currentInput;
+          return;
+        }
+        currentInput += val;
+        display.textContent = currentInput;
+      });
+    });
+  })();
+</script>
+</body>
+</html>
+</content>
+</create_file>
+
